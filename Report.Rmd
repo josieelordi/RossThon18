@@ -43,7 +43,27 @@ fares <- filter(fares, num_flights > 12)
 #assume one flight per week minimum for a commercial airline
 
 fares$rev_customer_mile <- fares$revenue_per_customer/fares$distance
+
+names(airportData)[names(airportData) == "airport_id"] <- "origin_airport"
+fares <- merge(fares, airportData, by = "origin_airport")
+fares$city <- NULL
+fares$state <- NULL
+fares$airport_name <- NULL
+names(fares)[names(fares) == "latitude"] <- "origin_lat"
+names(fares)[names(fares) == "longitude"] <- "origin_long"
+
+names(airportData)[names(airportData) == "origin_airport"] <- "destination_airport"
+fares <- merge(fares, airportData, by = "destination_airport")
+fares$city <- NULL
+fares$state <- NULL
+fares$airport_name <- NULL
+names(fares)[names(fares) == "latitude"] <- "destination_lat"
+names(fares)[names(fares) == "longitude"] <- "destination_long"
+
 ```
 
 ```{r}
-r
+map<-get_map(location='united states', zoom=4, source='google',color='color')
+
+ggmap() + geom_curve(aes(x = fares$origin_lat, y = fares$origin_long, xend = fares$destination_lat, yend = fares$destination_long, colour = fares$revenue_per_customer))
+```
