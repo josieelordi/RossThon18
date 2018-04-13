@@ -12,14 +12,38 @@ knitr::opts_chunk$set(echo = TRUE)
 # Data Cleaning
 
 ```{r}
-weatherData <- read.csv("weather.csv")
+invisible(library(lubridate))
+invisible(library(ggplot2))
+invisible(library(dplyr))
+
 stockData <- read.csv("stock_prices.csv")
-trafficData <- read.csv("PRIMARY_flight_traffic.csv")
-fareData <- read.csv("fares.csv")
 eventData <- read.csv("events_US.csv")
 airportData <- read.csv("airports.csv")
-
-
-
 ```
 
+```{r}
+fares <- read.csv("fares.csv")
+fares$revenue_per_customer <- fares$revenue / fares$num_people
+summary(fares$revenue)
+
+flights <- read.csv("PRIMARY_flight_traffic.csv")
+x <- flights %>% group_by(quarter, airline_id, origin_airport, destination_airport) %>% dplyr::count()
+
+fares <- left_join(fares, x, by = c("quarter", "airline_id", "origin_airport", "destination_airport")) %>% rename(num_flights = n)
+
+flights$X <- NULL
+flights$wheels_off <- NULL
+flights$wheels_on <- NULL
+
+summary(fares)
+
+fares <- filter(fares, num_people > 5)
+fares <- filter(fares, airline_id == "AA"| airline_id == "AS"| airline_id == "B6"| airline_id == "DL"| airline_id == "EV"| airline_id == "F9"| airline_id == "HA"| airline_id == "NK"| airline_id == "OO"| airline_id == "UA"| airline_id == "VX"| airline_id == "WN")
+fares <- filter(fares, num_flights > 12)
+#assume one flight per week minimum for a commercial airline
+
+fares$rev_customer_mile <- fares$revenue_per_customer/fares$distance
+```
+
+```{r}
+r
