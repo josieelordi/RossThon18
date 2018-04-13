@@ -9,7 +9,17 @@ output: html_document
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
+# Data Cleaning
+
 ```{r}
+weatherData <- read.csv("weather.csv")
+stockData <- read.csv("stock_prices.csv")
+trafficData <- read.csv("PRIMARY_flight_traffic.csv")
+fareData <- read.csv("fares.csv")
+eventData <- read.csv("events_US.csv")
+airportData <- read.csv("airports.csv")
+
+
 
 ```
 
