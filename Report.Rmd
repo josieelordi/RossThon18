@@ -63,7 +63,16 @@ names(fares)[names(fares) == "longitude"] <- "destination_long"
 ```
 
 ```{r}
+library(ggmap)
+library(fiftystater)
 map<-get_map(location='united states', zoom=4, source='google',color='color')
+fares <- na.omit(fares)
 
-ggmap() + geom_curve(aes(x = fares$origin_lat, y = fares$origin_long, xend = fares$destination_lat, yend = fares$destination_long, colour = fares$revenue_per_customer))
+fares1 <- filter(fares, origin_airport == "ATL")
+ggmap(map) + geom_segment(
+        aes(x=origin_long, y=origin_lat, xend = destination_long, yend = destination_lat, show_guide = TRUE, colour=rev_customer_mile), 
+        data=fares1, alpha=.1, na.rm = T) + 
+        scale_color_gradient(low="lightblue", high="red")
+
+
 ```
